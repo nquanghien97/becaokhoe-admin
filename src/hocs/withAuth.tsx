@@ -14,6 +14,7 @@ function withAuth<P extends object>(
       const checkAuth = () => {
         const token = localStorage.getItem('token') as string;
         const isAuthenticated = !!token;
+        console.log(isAuthenticated)
 
         if (requireAuth && !isAuthenticated) {
             // Hiển thị thông báo và cập nhật trạng thái

@@ -1,9 +1,10 @@
 import { Editor } from "@tinymce/tinymce-react";
-import { Button, Form, Input, Modal, Image } from "antd";
+import { Button, Form, Input, Modal, Image, Select } from "antd";
 import { useState } from "react";
 import { createNews } from "../../../services/news";
 import { useNotification } from "../../../hooks/useNotification";
 import { useNavigate } from "react-router-dom";
+import { optionsCategory } from "../../../config/OptionsSelect";
 
 interface AddNewsProps {
   open: boolean;
@@ -12,6 +13,7 @@ interface AddNewsProps {
 }
 interface FormValues {
   title: string;
+  category: string
 }
 
 function Add(props: AddNewsProps) {
@@ -39,6 +41,7 @@ function Add(props: AddNewsProps) {
     const formData = new FormData();
     formData.append('title', data.title);
     formData.append('content', content);
+    formData.append('category', data.category);
     formData.append('file', file!)
     try {
       await createNews(formData)
@@ -84,9 +87,18 @@ function Add(props: AddNewsProps) {
               <Input className="py-2" />
             </Form.Item>
           </div>
+          <div className="flex items-center h-[40px]">
+            <p className="w-[120px] text-left text-[#84571B]">Danh mục</p>
+            <Form.Item
+              className="!mb-0 w-full"
+              name="category"
+            >
+              <Select mode="multiple" options={optionsCategory} placeholder="Chọn Danh Mục" />
+            </Form.Item>
+          </div>
           <div className="flex items-center flex-col">
             <div className="flex items-center w-full h-full">
-              <p className="w-[120px] text-left text-[#84571B]">Hình ảnh</p>
+              <p className="w-[120px] text-left text-[#84571B]">Hình ảnh thumbnail</p>
               <Form.Item
                 className="!mb-0 w-full"
                 name="images"
@@ -123,17 +135,19 @@ function Add(props: AddNewsProps) {
                 valid_elements: '*[*]',
                 plugins: [
                   'advlist autolink lists link image charmap print preview anchor',
-                  'searchreplace visualblocks code fullscreen',
+                  'searchreplace visualblocks fullscreen',
                   'insertdatetime media paste code help wordcount textcolor',
                   'table',
                   'media',
-                  'image'
-                  // 'mediaembed'
+                  'image',
+                  'link',
+                  'lists'
                 ],
                 toolbar:
-                  'undo redo | formatselect | bold italic backcolor | ' +
-                  'alignleft aligncenter alignright alignjustify | ' +
-                  'bullist numlist outdent indent | table | forecolor | removeformat | media |image'
+                  'undo redo | formatselect | bold italic backcolor |' +
+                  'alignleft aligncenter alignright alignjustify |' +
+                  'link h1 h2 h3 h4 numlist bullist |' +
+                  'table forecolor media image'
               }}
             />
           </div>

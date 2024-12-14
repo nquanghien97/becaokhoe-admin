@@ -1,4 +1,4 @@
-import { TableColumnsType, Button, Table, ConfigProvider } from 'antd'
+import { TableColumnsType, Button, Table, ConfigProvider, Image, Alert } from 'antd'
 import { useEffect, useState } from 'react';
 import { NewsEntity } from '../../entities/News';
 import CloseIcon from '../../assets/icons/CloseIcon';
@@ -46,7 +46,7 @@ function News() {
       width: 300,
       render(_, record) {
         return (
-          <div>{formatDate(record.createdAt)}</div>
+          <div>{formatDate(record.created_at)}</div>
         )
       }
     },
@@ -56,8 +56,33 @@ function News() {
       render(_, record) {
         return (
           <div className="flex items-center gap-4">
-            <img src={`${import.meta.env.VITE_API_URL}${record.thumbnail_url}`} alt={record.title} className="rounded-md" width={160} height={160} />
             <p>{record.title}</p>
+          </div>
+        )
+      }
+    },
+    {
+      title: "Hình ảnh thumbnail",
+      key: 3,
+      render(_, record) {
+        return (
+          <div className="flex items-center gap-4">
+            <Image.PreviewGroup>
+              <Image src={`${import.meta.env.VITE_API_URL}${record.thumbnail_url}`} alt={record.title} className="rounded-md" width={160} height={160} />
+            </Image.PreviewGroup>
+          </div>
+        )
+      }
+    },
+    {
+      title: "Danh mục",
+      key: 4,
+      render(_, record) {
+        return (
+          <div className="flex flex-col gap-4">
+            {record.categories.map((item: { category: { name: string }}) => (
+              <Alert message={item.category.name} />
+            ))}
           </div>
         )
       }

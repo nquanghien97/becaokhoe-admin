@@ -1,10 +1,11 @@
-import { Button, Form, Input, Modal, Image } from "antd";
+import { Button, Form, Input, Modal, Image, Select } from "antd";
 import { getNews, updateNews } from "../../../services/news";
 import { useEffect, useState } from "react";
 import { NewsEntity } from "../../../entities/News";
 import { useNotification } from "../../../hooks/useNotification";
 import { Editor } from "@tinymce/tinymce-react";
 import { useNavigate } from "react-router-dom";
+import { optionsCategory } from "../../../config/OptionsSelect";
 
 interface EditNewsProps {
   open: boolean;
@@ -15,6 +16,7 @@ interface EditNewsProps {
 
 interface FormValues {
   title: string;
+  category: string;
 }
 
 function UpdateNews(props: EditNewsProps) {
@@ -30,7 +32,7 @@ function UpdateNews(props: EditNewsProps) {
   const notification = useNotification();
   const navigate = useNavigate();
   useEffect(() => {
-    (async() => {
+    (async () => {
       const res = await getNews(id)
       const data = res.data.data as NewsEntity
       setDataNews(res.data.data)
@@ -45,16 +47,18 @@ function UpdateNews(props: EditNewsProps) {
     const newFiles = e.target.files[0]
     try {
       setFile(newFiles)
-    } catch(err) {
+    } catch (err) {
       console.log(err)
     }
   }
 
   const onFinish = async (data: FormValues) => {
     setLoading(true);
+    if(!dataNews) return
     const formData = new FormData();
     formData.append('title', data.title);
     formData.append('content', content);
+    formData.append('category', data.category || dataNews.categories.map(item => item.category.name).toString());
     formData.append('file', file!)
     try {
       await updateNews(id, formData)
@@ -74,8 +78,7 @@ function UpdateNews(props: EditNewsProps) {
       setLoading(false);
     }
   }
-  if(!dataNews) return;
-
+  if (!dataNews) return;
   return (
     <Modal
       open={open}
@@ -127,6 +130,19 @@ function UpdateNews(props: EditNewsProps) {
               </div>
             )}
           </div>
+          <div className="flex items-center h-[40px]">
+            <p className="w-[120px] text-left text-[#84571B]">Danh mục</p>
+            <Form.Item
+              className="!mb-0 w-full"
+              name="category"
+            >
+              <Select
+                mode="multiple"
+                defaultValue={dataNews.categories.map((item: { category: { name: string } }) => item.category.name)}
+                options={optionsCategory}
+                placeholder="Chọn Danh Mục" />
+            </Form.Item>
+          </div>
           <div className="flex items-center">
             <p className="w-[106px] text-left text-[#84571B]">Nội dung</p>
             <Editor
@@ -141,15 +157,19 @@ function UpdateNews(props: EditNewsProps) {
                 valid_elements: '*[*]',
                 plugins: [
                   'advlist autolink lists link image charmap print preview anchor',
-                  'searchreplace visualblocks code fullscreen',
+                  'searchreplace visualblocks fullscreen',
                   'insertdatetime media paste code help wordcount textcolor',
                   'table',
                   'media',
+                  'image',
+                  'link',
+                  'lists'
                 ],
                 toolbar:
-                  'undo redo | formatselect | bold italic backcolor | ' +
-                  'alignleft aligncenter alignright alignjustify | ' +
-                  'bullist numlist outdent indent | table | forecolor | removeformat | media',
+                  'undo redo | formatselect | bold italic backcolor |' +
+                  'alignleft aligncenter alignright alignjustify |' +
+                  'link h1 h2 h3 h4 numlist bullist |' +
+                  'table forecolor media image',
                 setup: (editor) => {
                   editor.on('init', () => {
                     editor.setContent(dataNews?.content)

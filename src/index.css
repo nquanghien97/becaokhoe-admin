@@ -5,3 +5,7 @@
 html {
   background-color: #ccc;
 }
+
+.ant-modal-content {
+  padding: 0 !important;
+}

@@ -1,6 +1,7 @@
-import { Button, Form, Input, Tooltip } from "antd";
+import { Button, Form, Input, Select, Tooltip } from "antd";
 import SearchIcon from "../../assets/icons/SearchIcon";
 import { SearchFormType } from ".";
+import { optionsCategory } from "../../config/OptionsSelect";
 
 interface HeaderProps {
   setSearchForm: React.Dispatch<React.SetStateAction<SearchFormType>>
@@ -18,27 +19,25 @@ function Header(props: HeaderProps) {
 
   return (
     <Form onFinish={onFinish} className="flex py-2 justify-between" form={form}>
-      <div className="flex gap-2 items-center">
+      <div className="flex gap-2 items-center w-1/2">
         <Form.Item
-          className="w-[160px]"
-          name="full_name"
+          name="title"
         >
           <Input
-            placeholder="Họ tên"
-            className="py-2"
+            placeholder="Tiêu tề"
             rootClassName="border-[1px] border-[#84571B] rounded-lg"
             allowClear
           />
         </Form.Item>
         <Form.Item
-          className="w-[160px]"
-          name="phone_number"
+          name="category"
+          className="w-auto min-w-[200px]"
         >
-          <Input
-            placeholder="Số điện thoại"
-            className="py-2"
+          <Select
+            mode="multiple"
+            options={optionsCategory}
+            placeholder="Chọn danh mục"
             rootClassName="border-[1px] border-[#84571B] rounded-lg"
-            allowClear
           />
         </Form.Item>
         <Form.Item>
